@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '@/lib/supabase';
 
 const MAX_TEAM_SIZE = 500;
@@ -633,7 +634,7 @@ export default function StaffPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[900px] text-right">
+              <table className="w-full min-w-[1020px] text-right">
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50">
                     <th className="px-5 py-4 text-sm font-semibold text-slate-600">
@@ -658,6 +659,10 @@ export default function StaffPage() {
 
                     <th className="px-5 py-4 text-sm font-semibold text-slate-600">
                       الملاحظات
+                    </th>
+
+                    <th className="px-5 py-4 text-sm font-semibold text-slate-600">
+                      QR
                     </th>
 
                     <th className="px-5 py-4 text-sm font-semibold text-slate-600">
@@ -724,6 +729,17 @@ export default function StaffPage() {
                         <span className="block truncate">
                           {person.notes || '—'}
                         </span>
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <div className="inline-flex items-center rounded-xl border border-slate-200 bg-white p-2 shadow-sm">
+                          <QRCodeSVG
+                            value={`staff:${person.id}`}
+                            size={72}
+                            level="M"
+                            includeMargin
+                          />
+                        </div>
                       </td>
 
                       <td className="px-5 py-4">
