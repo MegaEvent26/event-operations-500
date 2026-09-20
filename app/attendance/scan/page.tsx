@@ -18,8 +18,6 @@ type AttendanceStatus =
   | 'break'
   | 'checked_out';
 
-
-
 const STATUS_LABELS: Record<AttendanceStatus, string> = {
   not_arrived: 'لم يحضر',
   working: 'يعمل',

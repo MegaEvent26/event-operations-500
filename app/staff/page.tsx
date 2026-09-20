@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   Edit3,
   Loader2,
+  MessageCircle,
   Plus,
   RefreshCw,
   Search,
@@ -18,13 +19,15 @@ import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '@/lib/supabase';
 
 const MAX_TEAM_SIZE = 500;
-
 type Staff = {
   id: string;
   full_name: string;
   employee_code: string;
   phone: string | null;
+  telegram_chat_id: string | null;
+  telegram_link_token: string | null;
   is_active: boolean;
+
   notes: string | null;
   created_at?: string;
   updated_at?: string;
@@ -103,9 +106,8 @@ export default function StaffPage() {
       const { data, error } = await supabase
         .from('staff')
         .select(
-          'id, full_name, employee_code, phone, is_active, notes, created_at, updated_at'
-        )
-        .order('employee_code', { ascending: true })
+  'id, full_name, employee_code, phone, telegram_chat_id, telegram_link_token, is_active, notes, created_at, updated_at'
+)        .order('employee_code', { ascending: true })
         .limit(MAX_TEAM_SIZE);
 
       if (error) {
@@ -263,7 +265,7 @@ export default function StaffPage() {
             is_active: form.is_active,
           })
           .select(
-            'id, full_name, employee_code, phone, is_active, notes, created_at, updated_at'
+            'id, full_name, employee_code, phone, telegram_chat_id, telegram_link_token, is_active, notes, created_at, updated_at'
           )
           .single();
 
@@ -302,7 +304,7 @@ export default function StaffPage() {
           })
           .eq('id', editingStaff.id)
           .select(
-            'id, full_name, employee_code, phone, is_active, notes, created_at, updated_at'
+            'id, full_name, employee_code, phone, telegram_chat_id, telegram_link_token, is_active, notes, created_at, updated_at'
           )
           .single();
 
@@ -348,6 +350,19 @@ export default function StaffPage() {
     }
   }
 
+  function openTelegramLink(person: Staff) {
+    if (!person.telegram_link_token) {
+      setErrorMessage('لا يوجد رابط Telegram لهذا الموظف.');
+      return;
+    }
+
+    const botUsername = 'Event26StaffBot';
+    const startParameter = `staff_${person.telegram_link_token}`;
+    const telegramUrl = `https://t.me/${botUsername}?start=${encodeURIComponent(startParameter)}`;
+
+    window.open(telegramUrl, '_blank', 'noopener,noreferrer');
+  }
+
   async function toggleStaff(person: Staff) {
     setErrorMessage('');
     setSuccessMessage('');
@@ -364,7 +379,7 @@ export default function StaffPage() {
         })
         .eq('id', person.id)
         .select(
-          'id, full_name, employee_code, phone, is_active, notes, created_at, updated_at'
+          'id, full_name, employee_code, phone, telegram_chat_id, telegram_link_token, is_active, notes, created_at, updated_at'
         )
         .single();
 
@@ -747,6 +762,24 @@ export default function StaffPage() {
 
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openTelegramLink(person)}
+                            className={`inline-flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-medium transition ${
+                              person.telegram_chat_id
+                                ? 'border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                : 'border border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100'
+                            }`}
+                            title={
+                              person.telegram_chat_id
+                                ? 'Telegram مرتبط — افتح المحادثة لربط/اختبار الحساب'
+                                : 'فتح Telegram لربط الموظف'
+                            }
+                          >
+                            <MessageCircle className="h-4 w-4" />
+                            {person.telegram_chat_id ? 'Telegram مرتبط' : 'ربط Telegram'}
+                          </button>
+
                           <button
                             type="button"
                             onClick={() => openEditModal(person)}
