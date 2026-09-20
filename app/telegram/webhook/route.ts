@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     const parts = text.split(/\s+/);
-    const linkToken = parts[1];
+    const linkToken = parts[1]?.replace(/^staff_/, '');
 
     if (!linkToken) {
       return NextResponse.json({
