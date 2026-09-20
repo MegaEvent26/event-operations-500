@@ -733,13 +733,16 @@ export default function StaffPage() {
 
                       <td className="px-5 py-4">
                         <div className="inline-flex items-center rounded-xl border border-slate-200 bg-white p-2 shadow-sm">
-                          <QRCodeSVG
-                            value={`staff:${person.id}`}
-                            size={72}
-                            level="M"
-                            includeMargin
-                          />
-                        </div>
+                            <QRCodeSVG
+  value={
+    typeof window !== 'undefined'
+      ? `${window.location.origin}/attendance/scan?staffId=${person.id}`
+      : ''
+  }
+  size={72}
+  level="M"
+  includeMargin
+/>                      </div>
                       </td>
 
                       <td className="px-5 py-4">
